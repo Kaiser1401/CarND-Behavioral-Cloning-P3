@@ -37,12 +37,9 @@ def load_data(files,brelocate = False, sNewDir=''):
                 src = sNewDir+fn
             img=cv2.imread(src)
 
-            img=cv2.resize(img,(0,0),fx=0.5, fy=0.5) # quater pixels for faster learning!
+            img=cv2.resize(img,(0,0),fx=0.5, fy=0.5) # quater pixels for faster learning :p!
 
-            img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-
-
-            #cv2.cvtColor(center_image, cv2.COLOR_BGR2YUV)
+            img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)          
         except:
             continue
 
@@ -77,19 +74,20 @@ def get_nn():
 
 
     model.add(Convolution2D(24, (5, 5), strides=(2, 2), activation="relu"))
-    #model.add(Convolution2D(36, (5, 5), strides=(2, 2), activation="relu"))  # drop every second layer, for faster learning
+    #model.add(Convolution2D(36, (5, 5), strides=(2, 2), activation="relu"))  # drop every second layer, for faster learning :p, network seems to be pretty complex anyway
     model.add(Convolution2D(48, (5, 5), strides=(2, 2), activation="relu"))
 
     #model.add(Convolution2D(64, (3, 3), activation="relu"))
     model.add(Convolution2D(64, (3, 3), activation="relu"))
 
-    model.add(Dropout(0.4))
+    model.add(Dropout(0.4)) # dropout for more robustnes
 
     model.add(Flatten())
 
     model.add(Dense(100))
     #model.add(Dense(50))
-    model.add(Dropout(0.4))
+
+    model.add(Dropout(0.4)) # dropout for more robustnes
 
     model.add(Dense(10))
 
@@ -103,14 +101,14 @@ def train_nn(mod,X,y,valSplit=0.2,epochs=2, rate=0.001):
 
 def main():
     X,y = load_data(['./recordings/001/driving_log.csv','./recordings/002/driving_log.csv','./recordings/003/driving_log.csv'])
-    #X,y = enhance(X,y)
+    #X,y = enhance(X,y) # nope
     nn = get_nn()
 
     X=numpyfy(X)
     y = numpyfy(y)
 
     train_nn(nn,X,y)
-    nn.save('model.h5')
+    nn.save('model2.h5')
 
 
 
