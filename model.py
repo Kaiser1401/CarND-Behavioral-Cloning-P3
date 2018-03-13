@@ -7,7 +7,7 @@ import os
 import math
 
 from keras.models import Sequential
-from keras.layers import Flatten,Dense,Lambda,Convolution2D,MaxPool2D,Cropping2D,Dropout
+from keras.layers import Flatten,Dense,Lambda,Convolution2D,MaxPool2D,Cropping2D,Dropout,AveragePooling2D
 from keras.optimizers import Adam
 
 from sklearn.model_selection import train_test_split
@@ -46,7 +46,7 @@ def load_images(csv_lines):
         src = line[0]
         angle = float(line[3])
         img = cv2.imread(src)
-        img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)  # quater pixels for faster learning :p!
+        #img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)  # quater pixels for faster learning :p! // uses average pooling now instead in the NN
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         images.append(img)
@@ -79,7 +79,10 @@ def numpyfy(a):
 
 def get_nn():
     model = Sequential()
-    model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(80,160,3))) #normalize
+    #model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(80,160,3))) #normalize
+    model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160, 320, 3)))  # normalize
+
+    model.add(AveragePooling2D(pool_size=(2,2),strides=(2,2),padding='valid')) # try to do 'resizing' here instead of preprossesing to improve video :p
 
     model.add(Cropping2D(cropping=((36,13),(0,0)))) # crop to road
 
@@ -154,7 +157,7 @@ def main():
     #y = numpyfy(y)
 
     #train_nn(nn,X,y)
-    nn.save('model2.h5')
+    nn.save('model3.h5')
 
 
 if __name__ == '__main__':

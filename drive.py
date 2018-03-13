@@ -62,7 +62,7 @@ def telemetry(sid, data):
         image = Image.open(BytesIO(base64.b64decode(imgString)))
 
         # half!
-        image.thumbnail((160,320), Image.ANTIALIAS)
+        #image.thumbnail((160,320), Image.ANTIALIAS) # moved to NN layer
 
 
         image_array = np.asarray(image)
